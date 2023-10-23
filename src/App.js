@@ -51,7 +51,7 @@ function App() {
   return (
     <div className="App">
       <p>
-        Loaded <Tick tick={Date.now()}/>. This is cold2.cc, on Cloudflare, version 2023oct22a.
+        Loaded <Tick tick={Date.now()}/>. This is cold2.cc, on Cloudflare, version 2023oct22b.
       </p>
       <p>
         Clicked <Tick tick={clicked1}/>:{" "}
