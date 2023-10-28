@@ -1,7 +1,41 @@
 
 import './App.css';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+function ServerTick() {
+
+  const [apiData, setApiData] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    setLoading(true);
+    const response = await fetch("https://cold2b.pages.dev/api");
+    if (response.ok) {
+      const data = await response.json();
+      setApiData(data);
+    } else {
+      console.error("fetch response not ok");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div>
+      <button onClick={fetchData} disabled={loading}>
+        {loading ? 'Loading...' : 'Fetch Data from API'}
+      </button>
+      {
+        apiData && (
+          <div>
+            <p>{apiData.message}</p>
+            <p>Version: {apiData.version}</p>
+            <p>Server Tick: {apiData.serverTick}</p>
+          </div>
+        )
+      }
+    </div>
+  );
+}
 
 function Tick({tick}) {//tick is from Date.now()
   if (!tick) return (<span>(not yet)</span>);//don't render jan1 1970 as a time something actually happened
@@ -51,7 +85,7 @@ function App() {
   return (
     <div className="App">
       <p>
-        Loaded <Tick tick={Date.now()}/>. This is cold2.cc, on Cloudflare, version 2023oct28a.
+        Loaded <Tick tick={Date.now()}/>. This is cold2.cc, on Cloudflare, version 2023oct28b.
       </p>
       <p>
         Clicked <Tick tick={clicked1}/>:{" "}
@@ -64,6 +98,7 @@ function App() {
         onClick={()=>{setClicked2(Date.now())}}>cold2.cc</a>
       </p>
       <BoxForm />
+      <ServerTick />
     </div>
   );
 }
