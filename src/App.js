@@ -9,7 +9,7 @@ function ServerTick() {
 
   const fetchData = async () => {
     setLoading(true);
-    const response = await fetch("https://cold2b.pages.dev/api");
+    const response = await fetch("https://cold2.cc/api");
     if (response.ok) {
       const data = await response.json();
       setApiData(data);
@@ -85,7 +85,7 @@ function App() {
   return (
     <div className="App">
       <p>
-        Loaded <Tick tick={Date.now()}/>. This is cold2.cc, on Cloudflare, version 2023oct28b.
+        Loaded <Tick tick={Date.now()}/>. This is cold2.cc, on Cloudflare, version 2023oct31a.
       </p>
       <p>
         Clicked <Tick tick={clicked1}/>:{" "}
