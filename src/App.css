@@ -1,2 +1,16 @@
+
 .App {
+}
+
+textarea {
+
+	width: calc(100% - 2em); /* Adjust the margin size as needed */
+	margin-right: 2em; /* Add right margin */
+
+	max-width: 100%;
+	height: 12em; /* Adjust to control the number of lines */
+	resize: vertical; /* Allows vertical resizing */
+	overflow-x: hidden; /* Hide horizontal scrollbar */
+	white-space: pre-wrap; /* Wrap lines */
+
 }

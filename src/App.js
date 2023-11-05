@@ -2,105 +2,145 @@
 import './App.css';
 import React, { useState, useEffect } from 'react';
 
-function ServerTick() {
+var firstTick = Date.now();
+console.log(sayTick(firstTick) + ' ~ top of app.js');
 
-  const [apiData, setApiData] = useState(null);
-  const [loading, setLoading] = useState(false);
 
-  const fetchData = async () => {
-    setLoading(true);
-    const response = await fetch("https://cold2.cc/api");
-    if (response.ok) {
-      const data = await response.json();
-      setApiData(data);
-    } else {
-      console.error("fetch response not ok");
-    }
-    setLoading(false);
-  };
+function FetchComponent() {
 
-  return (
-    <div>
-      <button onClick={fetchData} disabled={loading}>
-        {loading ? 'Loading...' : 'Fetch Data from API'}
-      </button>
-      {
-        apiData && (
-          <div>
-            <p>{apiData.message}</p>
-            <p>Version: {apiData.version}</p>
-            <p>Server Tick: {apiData.serverTick}</p>
-          </div>
-        )
-      }
-    </div>
-  );
+	const [apiData, setApiData] = useState(null);
+	const [loading, setLoading] = useState(false);
+
+	const [tickSend, setTickSend] = useState(0);
+	const [tickReceived, setTickReceived] = useState(0);
+
+	const fetchData = async () => {
+		setLoading(true);
+		setTickSend(Date.now());
+		const response = await fetch("https://cold2.cc/api");
+		if (response.ok) {
+			const data = await response.json();
+			setApiData(data);
+		} else {
+			console.error("fetch response not ok");
+		}
+		setLoading(false);
+		setTickReceived(Date.now());
+	};
+
+	return (
+		<div>
+			<p>
+				<button onClick={fetchData} disabled={loading}>
+					{loading ? 'Loading...' : 'Fetch Data from API'}
+				</button>
+				{
+					apiData && (
+						<div>
+							<p>{apiData.message}</p>
+							<p>Version: {apiData.version}</p>
+							<p>Server Tick: {apiData.serverTick}</p>
+						</div>
+					)
+				}
+			</p>
+		</div>
+	);
 }
 
-function Tick({tick}) {//tick is from Date.now()
-  if (!tick) return (<span>(not yet)</span>);//don't render jan1 1970 as a time something actually happened
-
-  var date = new Date(tick); // Create a Date object using the timestamp
-  var weekday = date.toLocaleDateString('en-US', { weekday: 'short' });//get text like "Mon"
-  var hours = date.getHours();//extract hours, minutes, seconds, and milliseconds
-  var minutes = date.getMinutes();
-  var seconds = date.getSeconds();
-  var milliseconds = date.getMilliseconds().toString().padStart(3, "0");
-
-  return(<span>{weekday} {hours}h {minutes}m {seconds}.{milliseconds}s</span>);
+const TickComponent = ({tick}) => {
+	return(<span>{sayTick(tick)}</span>);
+}
+function sayTick(tick) {
+	if (!tick) return "(not yet)";//don't render jan1 1970 as a time something actually happened
+	var date = new Date(tick); // Create a Date object using the timestamp
+	var weekday = date.toLocaleDateString('en-US', { weekday: 'short' });//get text like "Mon"
+	var hours = date.getHours();//extract hours, minutes, seconds, and milliseconds
+	var minutes = date.getMinutes();
+	var seconds = date.getSeconds();
+	var milliseconds = date.getMilliseconds().toString().padStart(3, "0");
+	return `${weekday} ${hours}h ${minutes}m ${seconds}.${milliseconds}s`;
 }
 
-const BoxForm = () => {
+const EnterComponent = ({myHigherSubmit}) => {//takes access to the outer text-got-submitted function
 
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("no message");
-  const onMySend = e => {
-    e.preventDefault();
-    console.log(email);
-  };
+	const [contents, setContents] = useState("");
+	const [status, setStatus] = useState("no contents");
 
-  function onBoxChange(event) {
-    setMessage(`measured ${event.target.value.length} characters`)
-    setEmail(event.target.value);
-  }
+	const myChange = e => {
+		setStatus(`measured ${e.target.value.length} characters`)
+		setContents(e.target.value);
+	}
 
-  return (
-    <div>
-      <form onSubmit={onMySend}>
-        <p>
-          <label>Text <input type="text" name="email" value={email} onChange={onBoxChange} /></label>{" "}
-          <button>Send</button>{" "}
-          {message}
-        </p>
-      </form>
-    </div>
-  );
+	const mySubmit = e => {
+		e.preventDefault();
+
+		myHigherSubmit(contents, true);//tell our superiors about the newly submitted text, also
+		console.log(contents);
+
+		setContents("");//blank the box so you can type the next message
+
+
+	};
+
+	return (
+		<div>
+			<form onSubmit={mySubmit}>
+				<p>
+					<label>Text <input type="text" name="message" value={contents} onChange={myChange} /></label>{" "}
+					<button>Send</button>{" "}
+					{status}
+				</p>
+			</form>
+		</div>
+	);
 };
+
+const LogBox = ({logText}) => {
+	return <div><p><textarea readOnly placeholder="log box" value={logText}></textarea></p></div>;
+}
+
+const TimedLinkComponent = ({linkText, linkTarget}) => {
+	const [tick, setTick] = useState(0);
+	return (
+		<div>
+			<p>
+				Clicked <TickComponent tick={tick}/>:{" "}
+				<a href={linkTarget} target="_blank" rel="noreferrer"
+				onClick={()=>{setTick(Date.now())}}>{linkText}</a>
+			</p>
+		</div>
+	);
+}
 
 function App() {
 
-  const [clicked1, setClicked1] = useState(0);
-  const [clicked2, setClicked2] = useState(0);
+	useEffect(() => {
+		// Perform your performance measurement here
+		console.log(sayTick(Date.now()) + " ~ App useEffect indicates done mounting");
 
-  return (
-    <div className="App">
-      <p>
-        Loaded <Tick tick={Date.now()}/>. This is cold2.cc, on Cloudflare, version 2023nov5a.
-      </p>
-      <p>
-        Clicked <Tick tick={clicked1}/>:{" "}
-        <a href="https://cold1.cc/" target="_blank" rel="noreferrer"
-        onClick={()=>{setClicked1(Date.now())}}>cold1.cc</a>
-      </p>
-      <p>
-        Clicked <Tick tick={clicked2}/>:{" "}
-        <a href="https://cold2.cc/" target="_blank" rel="noreferrer"
-        onClick={()=>{setClicked2(Date.now())}}>cold2.cc</a>
-      </p>
-      <BoxForm />
-      <ServerTick />
-    </div>
-  );
+	}, []);
+
+
+	const [logText, setLogText] = useState("");
+
+	const myHigherSubmit = (s, includeTick) => {
+		var t = includeTick ? sayTick(Date.now())+" ~ " : "";
+		setLogText(`${logText}\r\n${t}${s}`);
+	};
+
+	return (
+		<div className="App">
+			<p>
+				Loaded <TickComponent tick={Date.now()}/>. This is cold2.cc, on Cloudflare, version 2023nov5d.
+			</p>
+			<TimedLinkComponent linkText={"cold1.cc"} linkTarget={"https://cold1.cc/"} />
+			<TimedLinkComponent linkText={"cold2.cc"} linkTarget={"https://cold2.cc/"} />
+			<EnterComponent myHigherSubmit={myHigherSubmit} />
+			<FetchComponent />
+			<LogBox logText={logText} />
+		</div>
+	);
 }
 
 export default App;
