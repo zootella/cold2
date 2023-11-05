@@ -6,7 +6,7 @@ var firstTick = Date.now();
 console.log(sayTick(firstTick) + ' ~ top of app.js');
 
 
-function FetchComponent() {
+function FetchComponent({mySetTick3, mySetTick4}) {
 
 	const [apiData, setApiData] = useState(null);
 	const [loading, setLoading] = useState(false);
@@ -14,9 +14,17 @@ function FetchComponent() {
 	const [tickSend, setTickSend] = useState(0);
 	const [tickReceived, setTickReceived] = useState(0);
 
+	useEffect(() => {
+		console.log("fetch component use effect before,");
+		fetchData();
+		console.log("... fetch component use effect after.");
+	}, []);
+
 	const fetchData = async () => {
 		setLoading(true);
-		setTickSend(Date.now());
+		let t3 = Date.now();
+		setTickSend(t3);
+		mySetTick3(t3);
 		const response = await fetch("https://cold2.cc/api");
 		if (response.ok) {
 			const data = await response.json();
@@ -25,7 +33,9 @@ function FetchComponent() {
 			console.error("fetch response not ok");
 		}
 		setLoading(false);
-		setTickReceived(Date.now());
+		let t4 = Date.now();
+		setTickReceived(t4);
+		mySetTick4(t4);
 	};
 
 	return (
@@ -39,7 +49,14 @@ function FetchComponent() {
 						<div>
 							<p>{apiData.message}</p>
 							<p>Version: {apiData.version}</p>
-							<p>Server Tick: {apiData.serverTick}</p>
+							<p>Server Tick: {sayTick(apiData.serverTick)} which is {tickReceived - apiData.serverTick}ms away from the browser time</p>
+							{
+								tickSend < tickReceived
+								?
+								<p>Request sent {sayTick(tickSend)} and response received {sayTick(tickReceived)} which is {tickReceived - tickSend}ms later</p>
+								:
+								<p>Request sent {sayTick(tickSend)}</p>
+							}
 						</div>
 					)
 				}
@@ -113,14 +130,52 @@ const TimedLinkComponent = ({linkText, linkTarget}) => {
 	);
 }
 
+
+/*
+for the log box, you want four ticks
+tickTop - code execution has started in app.js
+tickEffect - react called App's useEffect for the first time, indicating components are loaded
+tickSent - first call to fetch
+tickReceived - first response
+
+
+*/
+
+const StopwatchComponent = ({tick1, tick2, tick3, tick4}) => {
+
+
+
+	return (
+		<p>
+			Stopwatch start {sayTick(tick1)}, rendered {sayTick(tick2)}, request {sayTick(tick3)}, received {sayTick(tick4)}
+		</p>
+	);
+
+
+}
+
+
+
+
+
 function App() {
 
 	useEffect(() => {
-		// Perform your performance measurement here
-		console.log(sayTick(Date.now()) + " ~ App useEffect indicates done mounting");
+		let t2 = Date.now();
+		console.log(sayTick(t2) + " ~ App useEffect indicates done mounting");
+		mySetTick2(t2);
 
 	}, []);
 
+	const [tick1, setTick1] = useState(firstTick);
+	const [tick2, setTick2] = useState(0);
+	const [tick3, setTick3] = useState(0);
+	const [tick4, setTick4] = useState(0);
+
+	function mySetTick1(t) { if (!tick1) setTick1(t); }
+	function mySetTick2(t) { if (!tick2) setTick2(t); }
+	function mySetTick3(t) { if (!tick3) setTick3(t); }
+	function mySetTick4(t) { if (!tick4) setTick4(t); }
 
 	const [logText, setLogText] = useState("");
 
@@ -132,12 +187,13 @@ function App() {
 	return (
 		<div className="App">
 			<p>
-				Loaded <TickComponent tick={Date.now()}/>. This is cold2.cc, on Cloudflare, version 2023nov5d.
+				Loaded <TickComponent tick={tick2}/>. This is cold2.cc, on Cloudflare, version 2023nov5k.
 			</p>
 			<TimedLinkComponent linkText={"cold1.cc"} linkTarget={"https://cold1.cc/"} />
 			<TimedLinkComponent linkText={"cold2.cc"} linkTarget={"https://cold2.cc/"} />
 			<EnterComponent myHigherSubmit={myHigherSubmit} />
-			<FetchComponent />
+			<FetchComponent mySetTick3={mySetTick3} mySetTick4={mySetTick4} />
+			<StopwatchComponent tick1={tick1} tick2={tick2} tick3={tick3} tick4={tick4} />
 			<LogBox logText={logText} />
 		</div>
 	);
