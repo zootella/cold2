@@ -23,6 +23,7 @@ Notes:
  * Run `npm create cloudflare@latest` in a fancy terminal, like PowerShell or Visual Studio Code; Git SCM's MING64 can't do the fancy interactive menus.
  * Fixed error during `create` by updating npm with `$ npm install -g npm`
  * Wrangler `login` pops open browser to page of permissions
+ * Fixed a mess on Windows where wrangler was installed globally, and had an expired or incorrectly permissioned OAuth token. You want wranger installed locally, only. Deleted `C:\Users\UserName\AppData\Roaming\npm\wrangler.ps1` and `C:\Users\UserName\.wrangler`. Also deleted `cold2/.wrangler` and `cold2/node_modules` and repeated `npm install` to fix this.
 
 Commands to use.
 
