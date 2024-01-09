@@ -13,14 +13,30 @@ $ cd cold2
 $ git remote add origin git@github.com:zootella/cold2.git
 $ git branch -M main
 $ git push -u origin main
+
+$ wrangler --version
+$ wrangler whoami
+$ wrangler login
 ```
 
-Commands to use. Pushing to GitHub does not start Cloudflare deploy.
+Notes:
+ * Run `npm create cloudflare@latest` in a fancy terminal, like PowerShell or Visual Studio Code; Git SCM's MING64 can't do the fancy interactive menus.
+ * Fixed error during `create` by updating npm with `$ npm install -g npm`
+ * Wrangler `login` pops open browser to page of permissions
+
+Commands to use.
 
 ```
+$ npm run start
 $ npm run pages:dev
 $ npm run pages:deploy
 ```
+
+Notes:
+ * Pushing to GitHub does not start Cloudflare deploy; they're separate and I like that better.
+ * Unlike Amplify, builds locally and pushes static assets, which is faster.
+ * `start` runs Webpack for React, while `pages:dev` and `pages:deploy` run Wrangler, which runs Webpack and then React.
+ * Not able to get pages:dev working on Mac or Windows.
 
 Locations
 

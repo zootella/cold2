@@ -187,7 +187,7 @@ function App() {
 	return (
 		<div className="App">
 			<p>
-				Loaded <TickComponent tick={tick2}/>. This is cold2.cc, on Cloudflare, version 2023nov5k.
+				Loaded <TickComponent tick={tick2}/>. This is cold2.cc, on Cloudflare, version 2024jan9a.
 			</p>
 			<TimedLinkComponent linkText={"cold1.cc"} linkTarget={"https://cold1.cc/"} />
 			<TimedLinkComponent linkText={"cold2.cc"} linkTarget={"https://cold2.cc/"} />
