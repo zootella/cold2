@@ -14,16 +14,16 @@ $ git remote add origin git@github.com:zootella/cold2.git
 $ git branch -M main
 $ git push -u origin main
 
-$ wrangler --version
-$ wrangler whoami
-$ wrangler login
+$ npx wrangler --version
+$ npx wrangler whoami
+$ npx wrangler login
 ```
 
 Notes:
  * Run `npm create cloudflare@latest` in a fancy terminal, like PowerShell or Visual Studio Code; Git SCM's MING64 can't do the fancy interactive menus.
  * Fixed error during `create` by updating npm with `$ npm install -g npm`
  * Wrangler `login` pops open browser to page of permissions
- * Fixed a mess on Windows where wrangler was installed globally, and had an expired or incorrectly permissioned OAuth token. You want wranger installed locally, only. Deleted `C:\Users\UserName\AppData\Roaming\npm\wrangler.ps1` and `C:\Users\UserName\.wrangler`. Also deleted `cold2/.wrangler` and `cold2/node_modules` and repeated `npm install` to fix this.
+ * Fixed a mess on Windows where wrangler was installed globally, and had an expired or incorrectly permissioned OAuth token. You want wranger installed in the project, only. Deleted `C:\Users\UserName\AppData\Roaming\npm\wrangler.ps1` and `C:\Users\UserName\.wrangler`. Also deleted `cold2/.wrangler` and `cold2/node_modules` and repeated `npm install` to fix this.
 
 Commands to use.
 
